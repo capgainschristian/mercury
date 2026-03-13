@@ -1,0 +1,35 @@
+services:
+  web:
+    build: ./src
+    env_file:
+      - .env
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./src:/usr/src
+    command: go run ./cmd/main.go -b 0.0.0.0
+    depends_on:
+      cache:
+        condition: service_healthy
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    sysctls:
+      - vm.overcommit_memory=1
+    environment:
+      - RDB_PASSWORD=${RDB_PASSWORD}
+    ports:
+      - '6379:6379'
+    command: >
+      redis-server --save 20 1 --loglevel warning --requirepass $${RDB_PASSWORD}
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "TEST", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - cache:/data
+
+volumes:
+  cache:
+    driver: local

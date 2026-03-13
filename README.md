@@ -1,9 +1,21 @@
 Mercury
 
-Stand up Redis locally and check to make sure it's running:
+Bring up the entire stack:
 
-docker run -d --name notification-redis -p 6379:6379 redis:latest
+```
+docker compose up --build -d
+```
 
-# Should return PONG
+If you want to use the Go container to develop and/or troubleshoot:
 
-docker exec -it notification-redis redis-cli ping
+```
+docker compose exec web sh
+```
+
+Teardown:
+
+```
+docker compose down
+docker compose down -v (clean slate)
+```
+
