@@ -1,4 +1,4 @@
-Mercury
+Mercury is the Roman name for Hermes, the swift Greek god of commerce, thieves, travelers, and the primary messenger of the Olympians.
 
 Bring up the entire stack:
 
