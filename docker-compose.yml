@@ -14,8 +14,6 @@ services:
   cache:
     image: redis:6.2-alpine
     restart: always
-    sysctls:
-      - vm.overcommit_memory=1
     environment:
       - RDB_PASSWORD=${RDB_PASSWORD}
     ports:
