@@ -11,17 +11,18 @@ services:
     depends_on:
       cache:
         condition: service_healthy
+
   cache:
     image: redis:6.2-alpine
     restart: always
     environment:
-      - RDB_PASSWORD=${RDB_PASSWORD}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     ports:
       - '6379:6379'
     command: >
-      redis-server --save 20 1 --loglevel warning --requirepass $${RDB_PASSWORD}
+      redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "TEST", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5

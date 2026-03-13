@@ -1,4 +1,4 @@
-package cmd
+package publisher
 
 import (
 	"context"
@@ -7,14 +7,16 @@ import (
 	"os"
 	"time"
 
+	"github.com/capgainschristian/mercury/schema"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
 
 const (
-	StreamName   = os.Getenv("STREAM_KEY")
 	MaxStreamLen = 10000
 )
+
+var StreamName = os.Getenv("STREAM_KEY")
 
 type Publisher struct {
 	client  *redis.Client

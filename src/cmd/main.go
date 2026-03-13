@@ -8,6 +8,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/capgainschristian/mercury/publisher"
+	"github.com/capgainschristian/mercury/schema"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -53,5 +55,9 @@ func publishDemoEvent(ctx context.Context, pub *publisher.Publisher, logger *slo
 		return
 	}
 
+	// Block until SIGINT/SIGTERM so Redis doesn't shut down prematurely
 	logger.Info("demo event published", "message_id", msgID)
+	logger.Info("waiting for shutdown signal (Ctrl+C to exit)...")
+	<-ctx.Done()
+	logger.Info("shutdown signal received, exiting")
 }
