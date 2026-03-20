@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/capgainschristian/mercury/mattermost"
 	"github.com/capgainschristian/mercury/schema"
 	"github.com/redis/go-redis/v9"
 )
@@ -80,9 +81,10 @@ func (w *Worker) poll(ctx context.Context, streamName string) error {
 
 	for _, stream := range streams {
 		for _, msg := range stream.Messages {
-
+			w.processMessage(ctx, streamName, msg)
 		}
 	}
+	return nil
 }
 
 func (w *Worker) processMessage(ctx context.Context, streamName string, msg redis.XMessage) {
@@ -176,4 +178,14 @@ func (w *Worker) ensureConsumerGroup(ctx context.Context, streamName string) err
 // hardcoded for now
 func expectedEnvironment() string {
 	return "production"
+}
+
+type MattermostNotiferAdapter struct {
+	inner *mattermost.Notifier
+}
+
+func (a *MattermostNotiferAdapter) Name() string                                 { return "mattermost" }
+func (a *MattermostNotiferAdapter) ShouldHandle(_ schema.NotificationEvent) bool { return true }
+func (a *MattermostNotiferAdapter) Deliver(ctx context.Context, evt schema.NotificationEvent) error {
+	return a.inner.Send(ctx, evt)
 }
